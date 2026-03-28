@@ -1,0 +1,42 @@
+{
+  "name": "mini-saas-ai-multitenant",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w api\" \"npm run dev -w web\"",
+    "dev:api": "npm run dev -w api",
+    "dev:web": "npm run dev -w web",
+    "build": "npm run build -w api && npm run build -w web",
+    "seed": "npm run seed -w api",
+    "test": "npm run test -w api && npm run test -w web",
+    "test:coverage": "npm run test:coverage -w api && npm run test:coverage -w web",
+    "lint": "eslint apps/api/src apps/web/src",
+    "lint:fix": "eslint apps/api/src apps/web/src --fix",
+    "format": "prettier --write \"apps/**/*.{ts,tsx,json}\"",
+    "format:check": "prettier --check \"apps/**/*.{ts,tsx,json}\"",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "apps/**/*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "apps/**/*.json": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.26",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.1",
+    "typescript-eslint": "^8.57.2"
+  }
+}
