@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { API_URL } from "../lib/api";
+import { FavoriteButton } from "./FavoriteButton";
 
 export interface ProductImage {
   imageUrl: string;
@@ -12,22 +13,31 @@ export interface ProductCardProduct {
   description: string;
   price: number;
   category: string;
+  brand?: string;
+  model?: string;
+  year?: number;
+  mileage?: number;
+  engineCc?: number;
+  color?: string;
   images: ProductImage[];
   companyId?: { _id: string; name: string; slug: string } | string;
 }
+
+const numberFormat = new Intl.NumberFormat("pt-BR");
 
 interface ProductCardProps {
   product: ProductCardProduct;
   isAdmin?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
+  onOpen?: () => void;
 }
 
 function resolveUrl(url: string): string {
   return url.startsWith("/uploads") ? `${API_URL}${url}` : url;
 }
 
-export function ProductCard({ product, isAdmin, onEdit, onDelete }: ProductCardProps) {
+export function ProductCard({ product, isAdmin, onEdit, onDelete, onOpen }: ProductCardProps) {
   const [index, setIndex] = useState(0);
   const images = product.images ?? [];
   const total = images.length;
@@ -46,14 +56,32 @@ export function ProductCard({ product, isAdmin, onEdit, onDelete }: ProductCardP
   }
 
   return (
-    <article className="product-card">
-      <div className="product-carousel">
+    <article className={`product-card${onOpen ? " product-card--clickable" : ""}`}>
+      <div
+        className="product-carousel"
+        onClick={onOpen}
+        role={onOpen ? "button" : undefined}
+        tabIndex={onOpen ? 0 : undefined}
+        onKeyDown={
+          onOpen
+            ? (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onOpen();
+                }
+              }
+            : undefined
+        }
+        aria-label={onOpen ? `Ver detalhes de ${product.name}` : undefined}
+      >
         <img
           key={src}
           src={src}
           alt={product.name}
           className="product-image product-image--slide"
         />
+
+        <FavoriteButton productId={product._id} className="favorite-button--card" />
 
         {total > 1 && (
           <>
@@ -114,12 +142,20 @@ export function ProductCard({ product, isAdmin, onEdit, onDelete }: ProductCardP
         )}
       </div>
 
-      <div className="product-body">
+      <div className="product-body" onClick={onOpen}>
         <div className="product-meta">
           <span className="pill">{product.category}</span>
-          <strong>R$ {product.price.toFixed(2)}</strong>
+          <strong>R$ {numberFormat.format(product.price)}</strong>
         </div>
         <h3>{product.name}</h3>
+        {(product.year || product.mileage != null || product.engineCc || product.color) && (
+          <ul className="product-specs">
+            {product.year ? <li>{product.year}</li> : null}
+            {product.mileage != null ? <li>{numberFormat.format(product.mileage)} km</li> : null}
+            {product.engineCc ? <li>{product.engineCc} cc</li> : null}
+            {product.color ? <li>{product.color}</li> : null}
+          </ul>
+        )}
         <p>{product.description}</p>
         {typeof product.companyId === "object" && product.companyId && (
           <span className="product-company">{product.companyId.name}</span>

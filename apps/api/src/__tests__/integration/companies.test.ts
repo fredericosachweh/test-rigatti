@@ -39,9 +39,14 @@ describe("GET /companies", () => {
     expect(res.body.companies).toHaveLength(2);
   });
 
-  it("returns 401 without token", async () => {
+  it("is publicly accessible without token", async () => {
+    await createCompany({ slug: "pub-a" });
+    await createCompany({ name: "Pub B", slug: "pub-b" });
+
     const res = await request(app).get("/companies");
-    expect(res.status).toBe(401);
+
+    expect(res.status).toBe(200);
+    expect(res.body.companies).toHaveLength(2);
   });
 
   it("returns empty array when no companies exist", async () => {

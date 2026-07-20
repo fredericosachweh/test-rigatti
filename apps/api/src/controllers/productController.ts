@@ -14,6 +14,12 @@ const productSchema = z.object({
   description: z.string().min(4),
   price: z.coerce.number().nonnegative(),
   category: z.string().min(2),
+  brand: z.string().min(1),
+  model: z.string().min(1),
+  year: z.coerce.number().int().min(1950).max(2100),
+  mileage: z.coerce.number().nonnegative(),
+  engineCc: z.coerce.number().nonnegative(),
+  color: z.string().min(1),
   images: z.array(imageSchema).min(1).max(6)
 });
 
@@ -26,13 +32,16 @@ const listSchema = z.object({
 
 export const listProducts = asyncHandler(async (req, res) => {
   const filters = listSchema.parse(req.query);
-  const { role, companyId } = req.user!;
+  const role = req.user?.role;
+  const companyId = req.user?.companyId;
 
   const query: Record<string, unknown> = {};
 
   if (role === "admin") {
+    // Admin gerencia apenas o estoque da própria loja
     query.companyId = companyId;
   } else {
+    // Visitantes anônimos e clientes navegam no catálogo público de todas as unidades
     const slugs = filters.companySlugs
       ? Array.isArray(filters.companySlugs)
         ? filters.companySlugs
@@ -56,7 +65,10 @@ export const listProducts = asyncHandler(async (req, res) => {
     query.$or = [
       { name: { $regex: filters.search, $options: "i" } },
       { description: { $regex: filters.search, $options: "i" } },
-      { category: { $regex: filters.search, $options: "i" } }
+      { category: { $regex: filters.search, $options: "i" } },
+      { brand: { $regex: filters.search, $options: "i" } },
+      { model: { $regex: filters.search, $options: "i" } },
+      { color: { $regex: filters.search, $options: "i" } }
     ];
   }
 
@@ -68,10 +80,14 @@ export const listProducts = asyncHandler(async (req, res) => {
 });
 
 export const getProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findOne({
-    _id: req.params.id,
-    companyId: req.user!.companyId
-  });
+  // Admin só acessa produtos da própria loja; visitantes/clientes acessam qualquer moto do catálogo
+  const query: Record<string, unknown> = { _id: req.params.id };
+
+  if (req.user?.role === "admin") {
+    query.companyId = req.user.companyId;
+  }
+
+  const product = await Product.findOne(query).populate("companyId", "name slug");
 
   if (!product) {
     throw new HttpError(404, "Produto nao encontrado.");

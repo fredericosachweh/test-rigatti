@@ -56,7 +56,7 @@ describe("apiFetch", () => {
 
   it("ApiError carries the status code and message", async () => {
     mockFetch(404, { message: "Not found" });
-    const err = await apiFetch("/missing").catch((e) => e);
+    const err = (await apiFetch("/missing").catch((e) => e)) as ApiError;
     expect(err).toBeInstanceOf(ApiError);
     expect(err.status).toBe(404);
     expect(err.message).toBe("Not found");
@@ -64,7 +64,7 @@ describe("apiFetch", () => {
 
   it("uses a fallback message when response has no message field", async () => {
     mockFetch(500, {});
-    const err = await apiFetch("/error").catch((e) => e);
+    const err = (await apiFetch("/error").catch((e) => e)) as ApiError;
     expect(err.message).toBeDefined();
   });
 });

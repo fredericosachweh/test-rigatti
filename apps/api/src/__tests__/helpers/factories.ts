@@ -53,6 +53,12 @@ export async function createProduct(companyId: unknown, overrides: Record<string
     description: "A test product description long enough",
     price: 100,
     category: "Test Category",
+    brand: "Test Brand",
+    model: "Test Model",
+    year: 2020,
+    mileage: 10000,
+    engineCc: 600,
+    color: "Preto",
     companyId,
     images: [
       {

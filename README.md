@@ -1,6 +1,8 @@
-# Mini SaaS Multi-tenant com Agente de IA
+# Modena SPO — Plataforma de Motos com Agente de IA
 
-Mini plataforma SaaS fullstack onde empresas gerenciam seus tratamentos e conversam com um agente de IA que responde usando dados reais do banco, respeitando o isolamento por `companyId`. Clientes têm acesso ao catálogo completo de todas as unidades e podem filtrar por empresa.
+Plataforma fullstack da **Modena SPO**, loja especializada em motos premium e de alta cilindrada em Curitiba. Cada unidade gerencia seu próprio estoque de motos e conta com um consultor de IA que responde usando dados reais do banco, respeitando o isolamento por `companyId`. Clientes têm acesso ao estoque completo de todas as unidades e podem filtrar por loja.
+
+> **Contato da loja:** Av. Marechal Floriano Peixoto, 2522 — Parolin, Curitiba/PR · WhatsApp (41) 99975-5741 · Instagram [@modenaspo](https://instagram.com/modenaspo)
 
 ## Stack
 
@@ -62,7 +64,9 @@ cp apps/web/.env.example apps/web/.env
 
 Escolha o provedor de IA com `AI_PROVIDER` (`openai` ou `anthropic`) e preencha a chave correspondente (`OPENAI_API_KEY` ou `ANTHROPIC_API_KEY`).
 
-### 4. Baixe as imagens de exemplo
+### 4. (Opcional) Baixe imagens locais de exemplo
+
+O seed de motos já usa fotos remotas, então este passo é opcional. Ele existe para popular `uploads/` com imagens locais caso queira testar o upload/servir estático.
 
 ```bash
 npm run download-images -w api
@@ -87,9 +91,9 @@ npm run dev
 
 | Email | Senha | Role | Unidade |
 |---|---|---|---|
-| `admin@rigatti.com.br` | `123456` | admin | Curitiba |
-| `admin@rigatti-sp.com.br` | `123456` | admin | São Paulo |
-| `cliente@rigatti.com.br` | `123456` | cliente | — (acesso a todas) |
+| `admin@modenaspo.com.br` | `123456` | admin | Curitiba |
+| `admin@modenaspo-sp.com.br` | `123456` | admin | São Paulo |
+| `cliente@modenaspo.com.br` | `123456` | cliente | — (acesso a todas) |
 
 ## Roles
 
@@ -113,7 +117,7 @@ Admins são vinculados a uma empresa no cadastro (criando ou entrando via slug).
 - Até **6 imagens por produto** com geração automática de thumbnail (900×600 original / 400×267 thumb, WebP).
 - Carousel de imagens no card com navegação por botões e dots.
 - Upload via `POST /upload/image` (restrito a admins); imagens servidas como arquivos estáticos.
-- Busca por nome, descrição e categoria com filtro por especialidade.
+- Busca por título, marca, modelo, cor, ano, descrição e categoria, com filtro por loja e faixa de preço.
 
 ## Como o agente de IA responde
 

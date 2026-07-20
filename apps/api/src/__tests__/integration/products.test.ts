@@ -11,11 +11,17 @@ import {
 } from "../helpers/factories.js";
 
 const validProduct = {
-  name: "Botox Facial",
-  description: "Aplicação de toxina botulínica para suavizar rugas.",
-  price: 1200,
-  category: "Facial",
-  images: [{ imageUrl: "/uploads/products/original/botox.webp" }]
+  name: "BMW R 1250 GS 2021",
+  description: "Trail premium com pacote completo e revisões em dia.",
+  price: 89900,
+  category: "Big Trail",
+  brand: "BMW",
+  model: "R 1250 GS",
+  year: 2021,
+  mileage: 32000,
+  engineCc: 1254,
+  color: "Cinza",
+  images: [{ imageUrl: "/uploads/products/original/bmw-gs.webp" }]
 };
 
 describe("GET /products", () => {
@@ -87,9 +93,16 @@ describe("GET /products", () => {
     expect(res.body.products).toHaveLength(1);
   });
 
-  it("returns 401 without token", async () => {
+  it("allows public browsing without token", async () => {
+    const co1 = await createCompany({ slug: "pub-co1" });
+    const co2 = await createCompany({ name: "Co2", slug: "pub-co2" });
+    await createProduct(co1._id, { name: "Public A" });
+    await createProduct(co2._id, { name: "Public B" });
+
     const res = await request(app).get("/products");
-    expect(res.status).toBe(401);
+
+    expect(res.status).toBe(200);
+    expect(res.body.products).toHaveLength(2);
   });
 });
 
@@ -252,11 +265,12 @@ describe("GET /products/:id", () => {
     expect(res.status).toBe(404);
   });
 
-  it("returns 401 without token", async () => {
-    const co = await createCompany({ slug: "get-noauth-co" });
-    const product = await createProduct(co._id);
+  it("allows public access to a product detail without token", async () => {
+    const co = await createCompany({ slug: "get-public-co" });
+    const product = await createProduct(co._id, { name: "Public Detail" });
 
     const res = await request(app).get(`/products/${product._id}`);
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(200);
+    expect(res.body.product.name).toBe("Public Detail");
   });
 });

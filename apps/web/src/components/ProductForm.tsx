@@ -12,6 +12,12 @@ export interface ProductInput {
   description: string;
   price: string;
   category: string;
+  brand: string;
+  model: string;
+  year: string;
+  mileage: string;
+  engineCc: string;
+  color: string;
   images: ProductImage[];
 }
 
@@ -29,6 +35,12 @@ const EMPTY_FORM: ProductInput = {
   description: "",
   price: "",
   category: "",
+  brand: "",
+  model: "",
+  year: "",
+  mileage: "",
+  engineCc: "",
+  color: "",
   images: []
 };
 
@@ -144,8 +156,8 @@ export function ProductForm({ initialValue, onSubmit, onCancel, submitLabel }: P
     <form className="panel" onSubmit={handleSubmit}>
       <div className="panel-header">
         <div>
-          <p className="eyebrow">Admin Studio</p>
-          <h3>{initialValue ? "Editar tratamento" : "Novo tratamento"}</h3>
+          <p className="eyebrow">Painel da loja</p>
+          <h3>{initialValue ? "Editar moto" : "Nova moto"}</h3>
         </div>
         {onCancel ? (
           <button className="ghost-button" onClick={onCancel} type="button">
@@ -260,21 +272,91 @@ export function ProductForm({ initialValue, onSubmit, onCancel, submitLabel }: P
       />
 
       <label className="field">
-        <span>Nome</span>
+        <span>Título do anuncio</span>
         <input
           value={form.name}
           onChange={(e) => setForm((c) => ({ ...c, name: e.target.value }))}
-          placeholder="Ex.: Toxina Botulínica Facial"
+          placeholder="Ex.: BMW R 1250 GS 2021"
           required
         />
       </label>
+
+      <div className="field-row">
+        <label className="field">
+          <span>Marca</span>
+          <input
+            value={form.brand}
+            onChange={(e) => setForm((c) => ({ ...c, brand: e.target.value }))}
+            placeholder="Ex.: BMW"
+            required
+          />
+        </label>
+        <label className="field">
+          <span>Modelo</span>
+          <input
+            value={form.model}
+            onChange={(e) => setForm((c) => ({ ...c, model: e.target.value }))}
+            placeholder="Ex.: R 1250 GS"
+            required
+          />
+        </label>
+      </div>
+
+      <div className="field-row">
+        <label className="field">
+          <span>Ano</span>
+          <input
+            value={form.year}
+            onChange={(e) => setForm((c) => ({ ...c, year: e.target.value }))}
+            placeholder="2021"
+            type="number"
+            min="1950"
+            max="2100"
+            required
+          />
+        </label>
+        <label className="field">
+          <span>Cilindrada (cc)</span>
+          <input
+            value={form.engineCc}
+            onChange={(e) => setForm((c) => ({ ...c, engineCc: e.target.value }))}
+            placeholder="1254"
+            type="number"
+            min="0"
+            required
+          />
+        </label>
+      </div>
+
+      <div className="field-row">
+        <label className="field">
+          <span>Quilometragem (km)</span>
+          <input
+            value={form.mileage}
+            onChange={(e) => setForm((c) => ({ ...c, mileage: e.target.value }))}
+            placeholder="32000"
+            type="number"
+            min="0"
+            required
+          />
+        </label>
+        <label className="field">
+          <span>Cor</span>
+          <input
+            value={form.color}
+            onChange={(e) => setForm((c) => ({ ...c, color: e.target.value }))}
+            placeholder="Cinza"
+            required
+          />
+        </label>
+      </div>
 
       <label className="field">
         <span>Descrição</span>
         <textarea
           value={form.description}
           onChange={(e) => setForm((c) => ({ ...c, description: e.target.value }))}
-          placeholder="Descreva o tratamento..."
+          placeholder="Descreva a moto, itens, procedência e histórico..."
           rows={4}
           required
         />
@@ -286,7 +368,7 @@ export function ProductForm({ initialValue, onSubmit, onCancel, submitLabel }: P
           <input
             value={form.price}
             onChange={(e) => setForm((c) => ({ ...c, price: e.target.value }))}
-            placeholder="1200.00"
+            placeholder="89900.00"
             type="number"
             min="0"
             step="0.01"
@@ -294,11 +376,11 @@ export function ProductForm({ initialValue, onSubmit, onCancel, submitLabel }: P
           />
         </label>
         <label className="field">
-          <span>Categoria</span>
+          <span>Categoria / Tipo</span>
           <input
             value={form.category}
             onChange={(e) => setForm((c) => ({ ...c, category: e.target.value }))}
-            placeholder="Facial"
+            placeholder="Ex.: Naked, Trail, Custom"
             required
           />
         </label>

@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { useAuth } from "./contexts/AuthContext";
@@ -6,19 +6,22 @@ import { AnalyticsPage } from "./pages/AnalyticsPage";
 import { AuthPage } from "./pages/AuthPage";
 import { ChatPage } from "./pages/ChatPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { FavoritesPage } from "./pages/FavoritesPage";
 
-function ProtectedRoutes() {
-  const { isReady, user } = useAuth();
-
-  if (!isReady) {
-    return <div className="screen-loader">Carregando sessao...</div>;
-  }
-
+function RequireAuth() {
+  const { user } = useAuth();
   if (!user) {
     return <Navigate replace to="/auth" />;
   }
+  return <Outlet />;
+}
 
-  return <AppShell />;
+function RequireAdmin() {
+  const { user } = useAuth();
+  if (user?.role !== "admin") {
+    return <Navigate replace to="/catalogo" />;
+  }
+  return <Outlet />;
 }
 
 export default function App() {
@@ -31,13 +34,23 @@ export default function App() {
   return (
     <>
       <Routes>
-        <Route path="/auth" element={user ? <Navigate replace to="/dashboard" /> : <AuthPage />} />
-        <Route element={<ProtectedRoutes />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/chat" element={<ChatPage />} />
-          {user?.role === "admin" && <Route path="/analytics" element={<AnalyticsPage />} />}
+        <Route path="/auth" element={user ? <Navigate replace to="/catalogo" /> : <AuthPage />} />
+
+        {/* Catálogo público + áreas logadas compartilham o mesmo shell */}
+        <Route element={<AppShell />}>
+          <Route path="/catalogo" element={<DashboardPage />} />
+
+          <Route element={<RequireAuth />}>
+            <Route path="/favoritos" element={<FavoritesPage />} />
+            <Route path="/chat" element={<ChatPage />} />
+          </Route>
+
+          <Route element={<RequireAdmin />}>
+            <Route path="/analytics" element={<AnalyticsPage />} />
+          </Route>
         </Route>
-        <Route path="*" element={<Navigate replace to={user ? "/dashboard" : "/auth"} />} />
+
+        <Route path="*" element={<Navigate replace to="/catalogo" />} />
       </Routes>
       <ThemeToggle />
     </>

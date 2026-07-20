@@ -25,7 +25,7 @@ describe("useTheme", () => {
   });
 
   it("reads saved theme from localStorage", () => {
-    localStorage.setItem("rigatti-theme", "dark");
+    localStorage.setItem("modena-theme", "dark");
     window.matchMedia = vi.fn().mockReturnValue({ matches: false });
     const { result } = renderHook(() => useTheme());
     expect(result.current.theme).toBe("dark");
@@ -41,7 +41,7 @@ describe("useTheme", () => {
   });
 
   it("toggle switches from dark to light", () => {
-    localStorage.setItem("rigatti-theme", "dark");
+    localStorage.setItem("modena-theme", "dark");
     window.matchMedia = vi.fn().mockReturnValue({ matches: true });
     const { result } = renderHook(() => useTheme());
 
@@ -56,7 +56,7 @@ describe("useTheme", () => {
 
     act(() => result.current.toggle());
 
-    expect(localStorage.getItem("rigatti-theme")).toBe("dark");
+    expect(localStorage.getItem("modena-theme")).toBe("dark");
   });
 
   it("sets data-theme attribute on documentElement", () => {

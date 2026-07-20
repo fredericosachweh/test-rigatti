@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: modena-api
+    runtime: node
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: npm install && npm run build -w api
+    startCommand: npm run start -w api
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      # Defina os valores abaixo no painel do Render (sync:false = secretos)
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: AI_PROVIDER
+        value: anthropic
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      # URL pública do frontend (CORS) — ex.: https://demo.modenaspo.com.br
+      - key: CLIENT_URL
+        sync: false
+      # Cloudinary (persistência das fotos enviadas pelo admin)
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false

@@ -9,6 +9,7 @@ vi.mock("sharp", () => ({
   default: vi.fn().mockReturnValue({
     resize: vi.fn().mockReturnThis(),
     webp: vi.fn().mockReturnThis(),
+    toBuffer: vi.fn().mockResolvedValue(Buffer.from("fake-webp")),
     toFile: vi.fn().mockResolvedValue(undefined)
   })
 }));

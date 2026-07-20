@@ -9,9 +9,9 @@ interface ChatMessage {
 }
 
 const promptSuggestions = [
-  "Quais tratamentos faciais vocês oferecem?",
-  "Tem procedimentos de harmonização abaixo de R$1.500?",
-  "Quais são as opções para rejuvenescimento corporal?"
+  "Quais motos trail vocês têm?",
+  "Tem alguma BMW abaixo de R$ 90 mil?",
+  "Quero uma naked com menos de 15 mil km"
 ];
 
 export function ChatPage() {
@@ -23,7 +23,7 @@ export function ChatPage() {
       id: crypto.randomUUID(),
       role: "assistant",
       content:
-        "Olá! Sou a assistente da Clínica Rigatti. Posso consultar nosso catálogo de tratamentos em tempo real. Pergunte por procedimento, faixa de valor ou indicação clínica."
+        "Olá! Sou o consultor virtual da Modena SPO. Posso consultar nosso estoque de motos em tempo real. Pergunte por marca, modelo, ano, tipo ou faixa de preço."
     }
   ]);
 
@@ -78,11 +78,11 @@ export function ChatPage() {
     <div className="page chat-page">
       <header className="page-header">
         <div>
-          <p className="eyebrow">Clínica Rigatti</p>
-          <h2>Assistente de tratamentos</h2>
+          <p className="eyebrow">Modena SPO</p>
+          <h2>Consultor de motos</h2>
           <p className="muted">
-            Consulte procedimentos, valores e indicações clínicas com base no catálogo real da
-            clínica.
+            Encontre a moto ideal com base no estoque real da loja — marca, modelo, ano, tipo e
+            preço.
           </p>
         </div>
       </header>
@@ -108,7 +108,7 @@ export function ChatPage() {
             {messages.map((message) => (
               <article className={`bubble ${message.role}`} key={message.id}>
                 <span className="bubble-role">
-                  {message.role === "user" ? "Você" : "Clínica Rigatti"}
+                  {message.role === "user" ? "Você" : "Modena SPO"}
                 </span>
                 <p>{message.content}</p>
               </article>
@@ -116,8 +116,8 @@ export function ChatPage() {
 
             {isLoading ? (
               <article className="bubble assistant">
-                <span className="bubble-role">Clínica Rigatti</span>
-                <p>Consultando catálogo de tratamentos...</p>
+                <span className="bubble-role">Modena SPO</span>
+                <p>Consultando o estoque...</p>
               </article>
             ) : null}
           </div>
@@ -132,7 +132,7 @@ export function ChatPage() {
             <textarea
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="Pergunte sobre tratamentos, valores ou indicações clínicas..."
+              placeholder="Pergunte sobre marcas, modelos, anos ou faixa de preço..."
               rows={3}
             />
             <button className="primary-button" disabled={isLoading || !input.trim()} type="submit">

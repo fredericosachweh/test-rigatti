@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 160" fill="none">
+  <g fill="#ffffff">
+    <path d="M120 10 H180 L150 46 Z"/>
+    <path d="M120 40 H180 V82 L150 58 L120 82 Z"/>
+  </g>
+  <text x="150" y="126" text-anchor="middle" fill="#ffffff" font-family="'Oswald','Arial Narrow',sans-serif" font-weight="500" font-size="46" letter-spacing="1">Modena</text>
+  <text x="150" y="150" text-anchor="middle" fill="#ffffff" font-family="'Oswald','Arial Narrow',sans-serif" font-weight="700" font-size="17" letter-spacing="12">SPO</text>
+</svg>

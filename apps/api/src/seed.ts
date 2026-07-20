@@ -6,399 +6,431 @@ import { Company } from "./models/Company.js";
 import { Product } from "./models/Product.js";
 import { User } from "./models/User.js";
 
-// ── Imagens locais (baixadas via npm run download-images) ───────────────────
-function imgs(slug: string, count: number = 3) {
-  const suffixes = ["", "-2", "-3", "-4", "-5", "-6"].slice(0, count);
+// ── Imagens ─────────────────────────────────────────────────────────────────
+// Fotos de motos servidas por palavra-chave (estáveis via lock). O admin pode
+// substituir por fotos reais do estoque a qualquer momento pelo painel.
+let imgLock = 100;
+function bikeImgs(count: number = 3) {
   return {
-    images: suffixes.map((s) => ({
-      imageUrl: `/uploads/products/original/${slug}${s}.webp`,
-      thumbnailUrl: `/uploads/products/thumb/${slug}${s}.webp`
-    }))
+    images: Array.from({ length: count }, () => {
+      const lock = imgLock++;
+      return {
+        imageUrl: `https://loremflickr.com/1024/768/motorcycle,superbike/all?lock=${lock}`,
+        thumbnailUrl: `https://loremflickr.com/480/360/motorcycle,superbike/all?lock=${lock}`
+      };
+    })
   };
 }
 
-// ── Catálogo ────────────────────────────────────────
-const demoCatalog = {
+interface Bike {
+  brand: string;
+  model: string;
+  year: number;
+  mileage: number;
+  engineCc: number;
+  color: string;
+  price: number;
+  category: string;
+  description: string;
+}
+
+function toProduct(bike: Bike) {
+  return {
+    name: `${bike.brand} ${bike.model} ${bike.year}`,
+    description: bike.description,
+    price: bike.price,
+    category: bike.category,
+    brand: bike.brand,
+    model: bike.model,
+    year: bike.year,
+    mileage: bike.mileage,
+    engineCc: bike.engineCc,
+    color: bike.color,
+    ...bikeImgs(3)
+  };
+}
+
+// ── Catálogo representativo de motos premium / alta cilindrada ──────────────
+const demoCatalog: Record<string, Bike[]> = {
   curitiba: [
     {
-      name: "Toxina Botulínica Facial",
+      brand: "BMW",
+      model: "R 1250 GS",
+      year: 2021,
+      mileage: 32000,
+      engineCc: 1254,
+      color: "Cinza",
+      price: 89900,
+      category: "Big Trail",
       description:
-        "Aplicação de botox para suavizar linhas de expressão na testa, glabela e região periorbital. Resultado natural com até 6 meses de duração.",
-      price: 1200,
-      category: "Facial",
-      ...imgs("toxina-botulinica-facial")
+        "A rainha das trail. Motor boxer de 1254cc, pacote de eletrônica completo, malas laterais e revisões em dia. Pronta para viajar o Brasil."
     },
     {
-      name: "Preenchimento Labial",
+      brand: "Ducati",
+      model: "Monster 937",
+      year: 2022,
+      mileage: 12000,
+      engineCc: 937,
+      color: "Vermelho",
+      price: 68900,
+      category: "Naked",
       description:
-        "Volumização e definição dos lábios com ácido hialurônico. Técnica personalizada para resultado harmônico.",
-      price: 1500,
-      category: "Facial",
-      ...imgs("preenchimento-labial")
+        "Naked italiana leve e agressiva. Testastretta de 111cv, quickshifter e modos de pilotagem. Único dono, impecável."
     },
     {
-      name: "Bioestimulador de Colágeno",
+      brand: "Kawasaki",
+      model: "Z900",
+      year: 2020,
+      mileage: 18500,
+      engineCc: 948,
+      color: "Verde",
+      price: 45900,
+      category: "Naked",
       description:
-        "Aplicação de Sculptra ou Radiesse para estimular a produção de colágeno e restaurar o volume facial perdido.",
-      price: 2200,
-      category: "Facial",
-      ...imgs("bioestimulador-colageno")
+        "Quatro cilindros equilibrada e cheia de torque. Escapamento esportivo, pneus novos e manutenção com histórico."
     },
     {
-      name: "Harmonização Facial Completa",
+      brand: "Harley-Davidson",
+      model: "Iron 883",
+      year: 2019,
+      mileage: 21000,
+      engineCc: 883,
+      color: "Preto",
+      price: 42900,
+      category: "Custom",
       description:
-        "Protocolo completo com toxina botulínica, preenchimentos e bioestimulador. Planejamento individualizado por sessão.",
-      price: 4500,
-      category: "Facial",
-      ...imgs("harmonizacao-facial")
+        "Sportster clássica com pegada dark. Guidão, banco e ronco Harley de fábrica. Documentação em dia."
     },
     {
-      name: "Skinbooster Profhilo",
+      brand: "Yamaha",
+      model: "MT-09",
+      year: 2021,
+      mileage: 15000,
+      engineCc: 889,
+      color: "Azul",
+      price: 52900,
+      category: "Naked",
       description:
-        "Hidratação profunda com ácido hialurônico de alta concentração. Melhora textura, firmeza e luminosidade da pele.",
-      price: 1800,
-      category: "Facial",
-      ...imgs("skinbooster-profhilo")
+        "Motor CP3 de três cilindros, resposta imediata e ronco inconfundível. Eletrônica de última geração e visual sci-fi."
     },
     {
-      name: "Microagulhamento com PRP",
+      brand: "Honda",
+      model: "CB 1000R",
+      year: 2020,
+      mileage: 22000,
+      engineCc: 998,
+      color: "Preto",
+      price: 54900,
+      category: "Naked",
       description:
-        "Microagulhamento combinado com plasma rico em plaquetas para rejuvenescimento, redução de cicatrizes e estímulo de colágeno.",
-      price: 900,
-      category: "Facial",
-      ...imgs("microagulhamento-prp")
+        "Neo Sports Café com acabamento premium. Quatro cilindros refinado, controle de tração e conforto para o dia a dia."
     },
     {
-      name: "Peel Químico Médio",
+      brand: "BMW",
+      model: "S 1000 RR",
+      year: 2021,
+      mileage: 9000,
+      engineCc: 999,
+      color: "Branco",
+      price: 115000,
+      category: "Esportiva",
       description:
-        "Esfoliação química com ácido tricloroacético (TCA) para manchas, melasma e textura irregular.",
-      price: 650,
-      category: "Facial",
-      ...imgs("peel-quimico-medio")
+        "Superbike de 205cv com ShiftCam, DTC e suspensão eletrônica. Baixa quilometragem, estado de zero."
     },
     {
-      name: "Limpeza de Pele Profunda",
+      brand: "Triumph",
+      model: "Street Triple 765 RS",
+      year: 2022,
+      mileage: 8000,
+      engineCc: 765,
+      color: "Cinza",
+      price: 62900,
+      category: "Naked",
       description:
-        "Protocolo de higienização profunda com extração, peeling enzimático e máscara calmante.",
-      price: 280,
-      category: "Facial",
-      ...imgs("limpeza-pele-profunda")
+        "Três cilindros afinado pela experiência da Moto2. Suspensão Öhlins, freios Brembo e quickshifter bidirecional."
     },
     {
-      name: "Fio de Sustentação PDO",
+      brand: "Kawasaki",
+      model: "Ninja 650",
+      year: 2021,
+      mileage: 14000,
+      engineCc: 649,
+      color: "Verde",
+      price: 39900,
+      category: "Esportiva",
       description:
-        "Lifting sem cirurgia com fios de polidioxanona para contorno facial e pescoço. Efeito tensor imediato.",
-      price: 3200,
-      category: "Facial",
-      ...imgs("fio-sustentacao-pdo")
+        "Esportiva equilibrada, ótima primeira superbike. Bicilíndrica econômica, posição confortável e ABS."
     },
     {
-      name: "Laser CO2 Fracionado Facial",
+      brand: "Ducati",
+      model: "Panigale V2",
+      year: 2021,
+      mileage: 7000,
+      engineCc: 955,
+      color: "Vermelho",
+      price: 92900,
+      category: "Esportiva",
       description:
-        "Rejuvenescimento com laser ablativo fracionado para manchas, rugas e textura. Tecnologia de alta precisão.",
-      price: 2800,
-      category: "Laser",
-      ...imgs("laser-co2-fracionado")
+        "Superbike com DNA de pista, 155cv, pacote eletrônico completo e o inconfundível vermelho Ducati. Peça de colecionador."
     },
     {
-      name: "Luz Intensa Pulsada (IPL)",
+      brand: "Honda",
+      model: "Africa Twin 1100",
+      year: 2022,
+      mileage: 19000,
+      engineCc: 1084,
+      color: "Prata",
+      price: 78900,
+      category: "Big Trail",
       description:
-        "Fotorejuvenescimento para manchas solares, rosácea e vasinhos superficiais. Pele mais uniforme e luminosa.",
-      price: 750,
-      category: "Laser",
-      ...imgs("ipl-luz-intensa-pulsada")
+        "Aventureira raiz com câmbio DCT opcional, tanque generoso e capacidade off-road de verdade. Preparada para expedições."
     },
     {
-      name: "Depilação a Laser Axila",
+      brand: "Harley-Davidson",
+      model: "Fat Bob 114",
+      year: 2020,
+      mileage: 16000,
+      engineCc: 1868,
+      color: "Preto",
+      price: 79900,
+      category: "Custom",
       description:
-        "Remoção definitiva de pelos da axila com laser Alexandrite ou Diodo. Pacote por sessão.",
-      price: 220,
-      category: "Laser",
-      ...imgs("depilacao-laser-axila")
+        "Milwaukee-Eight 114 com torque de sobra, pneu traseiro largo e visual muscular. Presença e som de respeito."
     }
   ],
   saopaulo: [
     {
-      name: "Lipo de Papada",
+      brand: "BMW",
+      model: "F 850 GS",
+      year: 2021,
+      mileage: 24000,
+      engineCc: 853,
+      color: "Amarelo",
+      price: 62900,
+      category: "Trail",
       description:
-        "Lipoaspiração minimamente invasiva da região submentoniana com laser para contorno do rosto e pescoço.",
-      price: 5500,
-      category: "Corporal",
-      ...imgs("lipo-papada")
+        "Trail média versátil, leve no off-road e confortável no asfalto. Bicilíndrica de 95cv com pacote de proteção."
     },
     {
-      name: "Criolipólise Abdômen",
+      brand: "Ducati",
+      model: "Diavel 1260",
+      year: 2020,
+      mileage: 13000,
+      engineCc: 1262,
+      color: "Preto",
+      price: 98900,
+      category: "Power Cruiser",
       description:
-        "Congelamento localizado de gordura para redução de medidas no abdômen. Sessão de 45 minutos por área.",
-      price: 1400,
-      category: "Corporal",
-      ...imgs("criolipolise-abdomen")
+        "A muscle bike da Ducati: 159cv, torque brutal e design que para o trânsito. Estado impecável, revisões na concessionária."
     },
     {
-      name: "Radiofrequência Corporal",
+      brand: "Kawasaki",
+      model: "Versys 650",
+      year: 2021,
+      mileage: 20000,
+      engineCc: 649,
+      color: "Cinza",
+      price: 44900,
+      category: "Trail",
       description:
-        "Tratamento de flacidez e celulite com radiofrequência tripolar. Indicado para abdômen, coxas e glúteos.",
-      price: 600,
-      category: "Corporal",
-      ...imgs("radiofrequencia-corporal")
+        "Crossover versátil para cidade e estrada. Bicilíndrica econômica, protetor de motor e malas. Ótimo custo-benefício."
     },
     {
-      name: "Ultrassom Microfocado HIFU",
+      brand: "Yamaha",
+      model: "MT-07",
+      year: 2022,
+      mileage: 9000,
+      engineCc: 689,
+      color: "Azul",
+      price: 44900,
+      category: "Naked",
       description:
-        "Lifting não invasivo com ultrassom de alta intensidade para flacidez do rosto, pescoço e corpo.",
-      price: 3500,
-      category: "Corporal",
-      ...imgs("hifu-ultrassom")
+        "A naked mais divertida da categoria. Motor CP2 com torque acessível, leve e ágil no dia a dia. Baixa quilometragem."
     },
     {
-      name: "Massagem Modeladora",
+      brand: "Triumph",
+      model: "Bonneville T120",
+      year: 2021,
+      mileage: 11000,
+      engineCc: 1200,
+      color: "Verde",
+      price: 66900,
+      category: "Custom",
       description:
-        "Protocolo de drenagem linfática e modelagem corporal para redução de medidas e melhora da circulação.",
-      price: 250,
-      category: "Corporal",
-      ...imgs("massagem-modeladora")
+        "Clássica britânica moderna. Bicilíndrica de 1200cc, acabamento cromado e conforto atemporal. Um ícone."
     },
     {
-      name: "Ozonioterapia Corporal",
+      brand: "Honda",
+      model: "CB 650R",
+      year: 2021,
+      mileage: 12000,
+      engineCc: 649,
+      color: "Cinza",
+      price: 42900,
+      category: "Naked",
       description:
-        "Aplicação de ozônio para tratamento de celulite, estrias e cicatrizes. Ação regenerativa e antioxidante.",
-      price: 480,
-      category: "Corporal",
-      ...imgs("ozonioterapia-corporal")
+        "Quatro cilindros com ronco encantador no estilo Neo Sports Café. Equilibrada, confiável e bonita de qualquer ângulo."
     },
     {
-      name: "Carboxiterapia",
+      brand: "BMW",
+      model: "R 1250 RT",
+      year: 2020,
+      mileage: 28000,
+      engineCc: 1254,
+      color: "Azul",
+      price: 84900,
+      category: "Touring",
       description:
-        "Injeção de CO2 medicinal para celulite, gordura localizada, olheiras e estrias. Estimula microcirculação.",
-      price: 380,
-      category: "Corporal",
-      ...imgs("carboxiterapia")
+        "Touring de luxo para engolir quilômetros. Boxer ShiftCam, para-brisa elétrico, malas e conforto de primeira classe."
     },
     {
-      name: "Toxina Botulínica Corporal",
+      brand: "Suzuki",
+      model: "GSX-S 1000",
+      year: 2021,
+      mileage: 15000,
+      engineCc: 999,
+      color: "Preto",
+      price: 52900,
+      category: "Naked",
       description:
-        "Aplicação de botox para hiperidrose (suor excessivo) em axilas, mãos e pés. Duração de 8 a 12 meses.",
-      price: 1800,
-      category: "Corporal",
-      ...imgs("toxina-botulinica-corporal")
+        "Hyper naked com motor derivado da GSX-R. 150cv, controle de tração e resposta imediata. Muita moto pelo preço."
     },
     {
-      name: "Preenchimento Glúteo",
+      brand: "Harley-Davidson",
+      model: "Sportster S",
+      year: 2022,
+      mileage: 6000,
+      engineCc: 1252,
+      color: "Vermelho",
+      price: 79900,
+      category: "Custom",
       description:
-        "Volumização e definição dos glúteos com ácido hialurônico ou bioestimulador. Técnica segura e natural.",
-      price: 4200,
-      category: "Corporal",
-      ...imgs("preenchimento-gluteo")
+        "A nova geração Sportster com motor Revolution Max 1250T, 121cv e eletrônica moderna. Radical e baixa quilometragem."
     },
     {
-      name: "Depilação a Laser Perna Completa",
+      brand: "KTM",
+      model: "390 Duke",
+      year: 2022,
+      mileage: 8000,
+      engineCc: 373,
+      color: "Laranja",
+      price: 31900,
+      category: "Naked",
       description:
-        "Remoção definitiva de pelos das pernas com laser de alta performance. Pacote por sessão.",
-      price: 680,
-      category: "Laser",
-      ...imgs("depilacao-laser-perna")
-    },
-    {
-      name: "Laser Nd:YAG Varizes",
-      description:
-        "Tratamento de varizes e vasinhos com laser Nd:YAG. Sem agulhas, sem recuperação longa.",
-      price: 900,
-      category: "Laser",
-      ...imgs("laser-ndyag-varizes")
-    },
-    {
-      name: "Consulta Avaliação Estética",
-      description:
-        "Consulta de avaliação completa com médico especialista para planejamento personalizado de tratamentos.",
-      price: 300,
-      category: "Consulta",
-      ...imgs("consulta-avaliacao")
+        "A naked mais afiada da entrada. Leve, esperta e cheia de personalidade austríaca. Perfeita para a cidade e o corner."
     }
   ]
 };
 
 // ── Dados de amostra para o mapa de calor ──────────
-// Simula 90 dias de uso realista: mais atividade em dias úteis,
+// Simula uso realista da loja: mais atividade em dias úteis,
 // horários de pico manhã (9-11h) e tarde (14-17h)
 function buildChatLogs(companyId: mongoose.Types.ObjectId, userId: mongoose.Types.ObjectId) {
   const now = Date.now();
   const DAY = 86_400_000;
 
-  // Perguntas realistas para clínica estética
+  // Perguntas realistas de quem procura moto
   const conversations: Array<{
     message: string;
     toolArgs: Record<string, unknown> | null;
     answer: string;
   }> = [
     {
-      message: "Quais tratamentos faciais vocês oferecem?",
-      toolArgs: { search: "facial", limit: 8 },
+      message: "Quais motos trail vocês têm?",
+      toolArgs: { category: "Trail", limit: 8 },
       answer:
-        "Temos diversas opções faciais: Toxina Botulínica, Preenchimento Labial, Bioestimulador de Colágeno, entre outros."
+        "Temos ótimas opções de trail: BMW R 1250 GS, Honda Africa Twin 1100, BMW F 850 GS e Kawasaki Versys 650."
     },
     {
-      message: "Quanto custa o botox?",
-      toolArgs: { search: "botox", limit: 5 },
-      answer: "A Toxina Botulínica Facial tem valor de R$ 1.200,00 por sessão."
-    },
-    {
-      message: "Vocês fazem harmonização facial?",
-      toolArgs: { search: "harmonização", category: "Facial", limit: 5 },
+      message: "Tem alguma BMW disponível?",
+      toolArgs: { brand: "BMW", limit: 6 },
       answer:
-        "Sim! A Harmonização Facial Completa inclui botox, preenchimentos e bioestimulador por R$ 4.500,00."
+        "Sim! Temos BMW R 1250 GS (R$ 89.900), S 1000 RR (R$ 115.000), R 1250 RT (R$ 84.900) e F 850 GS (R$ 62.900)."
     },
     {
-      message: "Tem tratamento para manchas no rosto?",
-      toolArgs: { search: "manchas", category: "Facial", limit: 6 },
+      message: "Quanto custa a Ducati Monster?",
+      toolArgs: { search: "monster", limit: 3 },
+      answer: "A Ducati Monster 937 2022 com 12.000 km está por R$ 68.900. Único dono e impecável."
+    },
+    {
+      message: "Quero uma naked até R$ 50 mil",
+      toolArgs: { category: "Naked", maxPrice: 50000, limit: 8 },
       answer:
-        "Para manchas indicamos o Peel Químico Médio (R$ 650) ou o Laser CO2 Fracionado (R$ 2.800)."
+        "Nessa faixa temos Kawasaki Z900 (R$ 45.900), Yamaha MT-07 (R$ 44.900), Honda CB 650R (R$ 42.900) e KTM 390 Duke (R$ 31.900)."
     },
     {
-      message: "Preenchimento labial, qual o valor?",
-      toolArgs: { search: "preenchimento labial", limit: 3 },
+      message: "Tem Harley custom?",
+      toolArgs: { brand: "Harley-Davidson", category: "Custom", limit: 5 },
       answer:
-        "O Preenchimento Labial custa R$ 1.500,00. Usamos ácido hialurônico com técnica personalizada."
+        "Temos a Iron 883 (R$ 42.900), Fat Bob 114 (R$ 79.900) e a nova Sportster S (R$ 79.900)."
     },
     {
-      message: "Quero saber sobre depilação a laser",
-      toolArgs: { search: "depilação laser", category: "Laser", limit: 5 },
-      answer: "Oferecemos depilação a laser na axila (R$ 220) e perna completa (R$ 680)."
-    },
-    {
-      message: "Tratamentos até R$ 500?",
-      toolArgs: { maxPrice: 500, limit: 8 },
-      answer: "Temos: Limpeza de Pele R$ 280, Massagem Modeladora R$ 250 e Peel Químico R$ 650."
-    },
-    {
-      message: "O que é skinbooster?",
-      toolArgs: { search: "skinbooster", limit: 3 },
-      answer: "O Skinbooster Profhilo é uma hidratação profunda com ácido hialurônico (R$ 1.800)."
-    },
-    {
-      message: "Tem tratamento para celulite?",
-      toolArgs: { search: "celulite", category: "Corporal", limit: 6 },
+      message: "Quais superbikes esportivas vocês oferecem?",
+      toolArgs: { category: "Esportiva", limit: 6 },
       answer:
-        "Sim! Radiofrequência Corporal (R$ 600), Ozonioterapia (R$ 480) e Carboxiterapia (R$ 380)."
+        "Temos BMW S 1000 RR (R$ 115.000), Ducati Panigale V2 (R$ 92.900) e Kawasaki Ninja 650 (R$ 39.900)."
     },
     {
-      message: "Tratamentos corporais disponíveis",
-      toolArgs: { category: "Corporal", limit: 10 },
+      message: "Motos com menos de 15 mil km",
+      toolArgs: { limit: 8 },
       answer:
-        "Temos Criolipólise, Radiofrequência, HIFU, Massagem Modeladora, entre outros tratamentos corporais."
+        "Várias! Panigale V2 (7.000 km), Sportster S (6.000 km), Street Triple RS (8.000 km) e MT-07 (9.000 km), entre outras."
     },
     {
-      message: "Qual o tratamento para flacidez?",
-      toolArgs: { search: "flacidez", limit: 5 },
-      answer: "Para flacidez recomendamos o HIFU (R$ 3.500) ou a Radiofrequência Corporal (R$ 600)."
+      message: "Tem Kawasaki Z900?",
+      toolArgs: { search: "z900", limit: 3 },
+      answer: "Temos! Kawasaki Z900 2020, verde, 18.500 km, com escape esportivo por R$ 45.900."
     },
     {
-      message: "Vocês fazem lipo?",
-      toolArgs: { search: "lipo", category: "Corporal", limit: 4 },
+      message: "Motos ano 2022",
+      toolArgs: { minYear: 2022, limit: 8 },
       answer:
-        "Temos a Lipo de Papada (R$ 5.500), procedimento minimamente invasivo para contorno facial."
+        "De 2022 temos Ducati Monster 937, Triumph Street Triple RS, Honda Africa Twin, Yamaha MT-07, Sportster S e KTM 390 Duke."
     },
     {
-      message: "Quero fazer um peeling, quais opções?",
-      toolArgs: { search: "peel", category: "Facial", limit: 4 },
-      answer: "Oferecemos o Peel Químico Médio com TCA por R$ 650,00."
-    },
-    {
-      message: "Microagulhamento com PRP, como funciona?",
-      toolArgs: { search: "microagulhamento PRP", limit: 3 },
+      message: "Quero uma moto para viajar",
+      toolArgs: { search: "trail touring viagem", limit: 6 },
       answer:
-        "O Microagulhamento com PRP combina microlesões com plasma rico em plaquetas (R$ 900)."
+        "Para estrada indicamos a BMW R 1250 GS, a R 1250 RT (touring) e a Honda Africa Twin 1100. Todas prontas para viajar."
     },
     {
-      message: "Fio de sustentação, o que é?",
-      toolArgs: { search: "fio PDO", category: "Facial", limit: 3 },
-      answer: "O Fio de Sustentação PDO é um lifting sem cirurgia para contorno facial (R$ 3.200)."
+      message: "Qual a moto mais barata?",
+      toolArgs: { maxPrice: 40000, limit: 5 },
+      answer: "A KTM 390 Duke 2022 por R$ 31.900 e a Kawasaki Ninja 650 por R$ 39.900."
     },
     {
-      message: "Tratamentos entre R$ 1000 e R$ 2000",
-      toolArgs: { minPrice: 1000, maxPrice: 2000, limit: 8 },
+      message: "Tem Yamaha MT?",
+      toolArgs: { search: "MT yamaha", brand: "Yamaha", limit: 4 },
       answer:
-        "Nessa faixa temos: Toxina Botulínica R$ 1.200, Preenchimento Labial R$ 1.500, Skinbooster R$ 1.800."
+        "Temos a MT-09 (R$ 52.900) e a MT-07 (R$ 44.900), ambas com o famoso motor CP da Yamaha."
     },
     {
-      message: "O que é carboxiterapia?",
-      toolArgs: { search: "carboxiterapia", limit: 3 },
-      answer: "Carboxiterapia é injeção de CO2 medicinal para celulite e estrias por R$ 380."
-    },
-    {
-      message: "Bioestimulador de colágeno, quanto fica?",
-      toolArgs: { search: "bioestimulador colágeno", limit: 3 },
-      answer: "O Bioestimulador de Colágeno (Sculptra/Radiesse) custa R$ 2.200 por sessão."
-    },
-    {
-      message: "Tem algo para olheiras?",
-      toolArgs: { search: "olheiras", limit: 4 },
-      answer: "A Carboxiterapia (R$ 380) é excelente para olheiras, estimulando a microcirculação."
-    },
-    {
-      message: "Quero fazer uma avaliação",
-      toolArgs: { search: "consulta avaliação", limit: 3 },
+      message: "Motos entre 60 e 90 mil",
+      toolArgs: { minPrice: 60000, maxPrice: 90000, limit: 8 },
       answer:
-        "Nossa Consulta de Avaliação Estética custa R$ 300 e inclui planejamento personalizado."
+        "Nessa faixa: BMW R 1250 GS (R$ 89.900), Ducati Monster 937 (R$ 68.900), Triumph Bonneville T120 (R$ 66.900) e Fat Bob 114 (R$ 79.900)."
     },
     {
-      message: "IPL para manchas solares",
-      toolArgs: { search: "IPL manchas solares", category: "Laser", limit: 4 },
-      answer: "A Luz Intensa Pulsada (IPL) é ideal para manchas solares e custa R$ 750 por sessão."
+      message: "Tem Triumph?",
+      toolArgs: { brand: "Triumph", limit: 4 },
+      answer: "Temos a Street Triple 765 RS (R$ 62.900) e a clássica Bonneville T120 (R$ 66.900)."
     },
     {
-      message: "Laser para varizes",
-      toolArgs: { search: "varizes laser", category: "Laser", limit: 3 },
-      answer: "Temos o Laser Nd:YAG para varizes e vasinhos por R$ 900, sem agulhas."
-    },
-    {
-      message: "Tratamentos mais baratos",
-      toolArgs: { maxPrice: 400, limit: 8 },
-      answer: "Os mais acessíveis: Depilação Axila R$ 220, Limpeza de Pele R$ 280, Massagem R$ 250."
-    },
-    {
-      message: "Procedimentos para rejuvenescimento",
-      toolArgs: { search: "rejuvenescimento", limit: 6 },
+      message: "Qual a moto com maior cilindrada?",
+      toolArgs: { search: "cilindrada custom", limit: 5 },
       answer:
-        "Para rejuvenescimento temos: Botox, Bioestimulador, Microagulhamento PRP, Laser CO2 e IPL."
+        "A Harley-Davidson Fat Bob com motor Milwaukee-Eight 114 (1868cc) é a maior do estoque, por R$ 79.900."
     },
     {
-      message: "Tem criolipólise?",
-      toolArgs: { search: "criolipólise", category: "Corporal", limit: 3 },
-      answer: "Sim! Criolipólise Abdômen por R$ 1.400 por área, sessão de 45 minutos."
-    },
-    {
-      message: "Qual tratamento para suor excessivo?",
-      toolArgs: { search: "hiperidrose suor", limit: 3 },
-      answer: "A Toxina Botulínica Corporal trata hiperidrose em axilas, mãos e pés por R$ 1.800."
-    },
-    {
-      message: "Tratamentos faciais até R$ 1500",
-      toolArgs: { category: "Facial", maxPrice: 1500, limit: 8 },
+      message: "Vocês fazem financiamento?",
+      toolArgs: null,
       answer:
-        "Faciais até R$ 1.500: Limpeza de Pele R$ 280, Peel R$ 650, Microagulhamento R$ 900, Botox R$ 1.200, Preenchimento R$ 1.500."
-    },
-    {
-      message: "O que é HIFU?",
-      toolArgs: { search: "HIFU ultrassom", limit: 3 },
-      answer:
-        "HIFU é o Ultrassom Microfocado para lifting não invasivo de rosto e corpo (R$ 3.500)."
-    },
-    {
-      message: "Ozonioterapia para que serve?",
-      toolArgs: { search: "ozonioterapia", limit: 3 },
-      answer:
-        "A Ozonioterapia Corporal trata celulite, estrias e cicatrizes com ação regenerativa (R$ 480)."
-    },
-    {
-      message: "Todos os tratamentos a laser",
-      toolArgs: { category: "Laser", limit: 10 },
-      answer:
-        "Oferecemos: Laser CO2 Fracionado, IPL, Depilação Axila, Depilação Perna e Laser Nd:YAG para varizes."
+        "Sim! Fazemos análise de financiamento rápida e simples, além de aceitar sua moto na troca. Fale com a equipe pelo WhatsApp (41) 99975-5741."
     }
   ];
 
-  // Distribuição de horários de pico realista para clínica
-  // Pico: seg-sex 9-11h e 14-17h | menor atividade: fins de semana
+  // Distribuição de horários de pico realista para loja
+  // Pico: seg-sáb 9-11h e 14-17h | menor atividade: domingo
   const peakSlots: Array<[number, number]> = [
     [1, 9],
     [1, 9],
@@ -493,33 +525,33 @@ async function seed() {
   ]);
 
   const [curitiba, saopaulo] = await Company.create([
-    { name: "Clínica Rigatti — Curitiba", slug: "rigatti-curitiba" },
-    { name: "Clínica Rigatti — São Paulo", slug: "rigatti-saopaulo" }
+    { name: "Modena SPO — Curitiba", slug: "modena-curitiba" },
+    { name: "Modena SPO — São Paulo", slug: "modena-saopaulo" }
   ]);
 
   const passwordHash = await bcrypt.hash("123456", 10);
 
   const [adminCwb, , adminSp] = await User.create([
     {
-      name: "Dra. Ana Rigatti",
-      email: "admin@rigatti.com.br",
+      name: "Equipe Modena Curitiba",
+      email: "admin@modenaspo.com.br",
       passwordHash,
       role: "admin",
       companyId: curitiba._id
     },
     {
-      name: "Dr. Carlos Rigatti",
-      email: "admin@rigatti-sp.com.br",
+      name: "Equipe Modena São Paulo",
+      email: "admin@modenaspo-sp.com.br",
       passwordHash,
       role: "admin",
       companyId: saopaulo._id
     },
-    { name: "Cliente Demo", email: "cliente@rigatti.com.br", passwordHash, role: "cliente" }
+    { name: "Cliente Demo", email: "cliente@modenaspo.com.br", passwordHash, role: "cliente" }
   ]);
 
   await Product.create([
-    ...demoCatalog.curitiba.map((item) => ({ companyId: curitiba._id, ...item })),
-    ...demoCatalog.saopaulo.map((item) => ({ companyId: saopaulo._id, ...item }))
+    ...demoCatalog.curitiba.map((bike) => ({ companyId: curitiba._id, ...toProduct(bike) })),
+    ...demoCatalog.saopaulo.map((bike) => ({ companyId: saopaulo._id, ...toProduct(bike) }))
   ]);
 
   const cwbLogs = buildChatLogs(curitiba._id, adminCwb._id);
@@ -527,8 +559,9 @@ async function seed() {
 
   await ChatLog.insertMany([...cwbLogs, ...spLogs]);
 
+  const total = demoCatalog.curitiba.length + demoCatalog.saopaulo.length;
   console.log(
-    `Seed finalizado: 2 unidades, 24 tratamentos, ${cwbLogs.length + spLogs.length} logs de chat para o mapa de calor.`
+    `Seed finalizado: 2 unidades, ${total} motos, ${cwbLogs.length + spLogs.length} logs de chat para o mapa de calor.`
   );
 }
 

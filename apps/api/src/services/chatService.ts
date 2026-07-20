@@ -7,22 +7,31 @@ import { searchProductsByCompany } from "./productSearch.js";
 import { ChatLog } from "../models/ChatLog.js";
 
 const SYSTEM_PROMPT =
-  "Voce e a assistente virtual da Clinica Rigatti, especializada em estetica e bem-estar. Responda sempre em portugues do Brasil, com tom acolhedor e profissional. Use apenas os tratamentos retornados pela tool — nunca invente procedimentos ou valores. Se nao houver resultado, sugira que o paciente entre em contato diretamente com a clinica. Seja objetiva e empática.";
+  "Voce e o consultor virtual da Modena SPO, loja especializada em motos premium e de alta cilindrada em Curitiba. Responda sempre em portugues do Brasil, com tom entusiasta, direto e profissional de quem entende de moto. Use apenas as motos retornadas pela tool — nunca invente modelos, anos, quilometragem ou valores. Ao apresentar uma moto, destaque marca, modelo, ano, cilindrada, quilometragem e preco. Se nao houver resultado, convide o cliente a falar com a equipe pelo WhatsApp (41) 99975-5741. Seja objetivo e ajude o cliente a encontrar a moto ideal.";
 
 const searchProductsToolDef = {
   name: "search_products",
   description:
-    "Busca produtos reais da empresa autenticada filtrando por nome, descricao, categoria ou faixa de preco.",
+    "Busca motos reais do estoque da loja autenticada filtrando por texto livre, marca, categoria/tipo, ano ou faixa de preco.",
   parameters: {
     type: "object" as const,
     properties: {
-      search: { type: "string", description: "Busca livre por nome, descricao ou categoria." },
-      category: { type: "string", description: "Categoria desejada." },
+      search: {
+        type: "string",
+        description: "Busca livre por nome, modelo, marca, cor, descricao ou categoria."
+      },
+      category: {
+        type: "string",
+        description: "Categoria/tipo da moto (ex.: Naked, Trail, Custom)."
+      },
+      brand: { type: "string", description: "Marca desejada (ex.: BMW, Ducati, Harley-Davidson)." },
+      minYear: { type: "number", description: "Ano minimo de fabricacao." },
+      maxYear: { type: "number", description: "Ano maximo de fabricacao." },
       minPrice: { type: "number", description: "Preco minimo." },
       maxPrice: { type: "number", description: "Preco maximo." },
       limit: {
         type: "number",
-        description: "Numero maximo de produtos a retornar. Use entre 1 e 12."
+        description: "Numero maximo de motos a retornar. Use entre 1 e 12."
       }
     },
     additionalProperties: false

@@ -4,14 +4,14 @@ type Theme = "light" | "dark";
 
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem("rigatti-theme") as Theme | null;
+    const saved = localStorage.getItem("modena-theme") as Theme | null;
     if (saved) return saved;
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   });
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("rigatti-theme", theme);
+    localStorage.setItem("modena-theme", theme);
   }, [theme]);
 
   function toggle() {

@@ -8,6 +8,7 @@ import { analyticsRouter } from "./routes/analyticsRoutes.js";
 import { authRouter } from "./routes/authRoutes.js";
 import { chatRouter } from "./routes/chatRoutes.js";
 import { companyRouter } from "./routes/companyRoutes.js";
+import { favoriteRouter } from "./routes/favoriteRoutes.js";
 import { productRouter } from "./routes/productRoutes.js";
 import { uploadRouter } from "./routes/uploadRoutes.js";
 
@@ -34,6 +35,7 @@ app.get("/health", (_req, res) => {
 app.use("/auth", authRouter);
 app.use("/companies", companyRouter);
 app.use("/products", productRouter);
+app.use("/favorites", favoriteRouter);
 app.use("/chat", chatRouter);
 app.use("/analytics", analyticsRouter);
 app.use("/upload", uploadRouter);

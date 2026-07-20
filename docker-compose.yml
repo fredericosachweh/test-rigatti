@@ -1,17 +1,15 @@
-version: "3.9"
-
 services:
   mongo:
     image: mongo:7
-    container_name: mini-saas-mongo
+    platform: linux/arm64
+    container_name: modena-spo-mongo
     restart: unless-stopped
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_DATABASE: mini_saas_ai
+      MONGO_INITDB_DATABASE: modena_spo
     volumes:
-      - mongo_data:/data/db
+      - modena_mongo_data:/data/db
 
 volumes:
-  mongo_data:
-
+  modena_mongo_data:

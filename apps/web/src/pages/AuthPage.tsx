@@ -13,7 +13,7 @@ export function AuthPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [loginForm, setLoginForm] = useState({
-    email: "admin@rigatti.com.br",
+    email: "admin@modenaspo.com.br",
     password: "123456"
   });
 
@@ -68,28 +68,28 @@ export function AuthPage() {
     <div className="auth-layout">
       <section className="auth-hero">
         <div className="auth-logo-badge">
-          <img src="/logo-rigatti.webp" alt="Clínica Rigatti" className="auth-logo" />
+          <img src="/logo-modena.webp" alt="Modena SPO" className="auth-logo" />
         </div>
         <h1>
-          Método Rigatti de <em>transformação estética.</em>
+          Motos premium com <em>história e procedência.</em>
         </h1>
         <p>
-          Plataforma exclusiva para gestão de tratamentos, agendamentos e atendimento inteligente
-          com dados reais da clínica.
+          Plataforma da Modena SPO para gestão do estoque de motos de alta cilindrada e atendimento
+          inteligente com dados reais da loja.
         </p>
 
         <div className="feature-grid">
           <article className="feature-card">
-            <strong>Isolamento por clínica</strong>
-            <span>Cada unidade gerencia seu próprio catálogo de tratamentos.</span>
+            <strong>Estoque por unidade</strong>
+            <span>Cada loja gerencia seu próprio estoque de motos.</span>
           </article>
           <article className="feature-card">
-            <strong>Gestão com controle</strong>
-            <span>Admins editam procedimentos. Clientees consultam e indicam.</span>
+            <strong>Procedência garantida</strong>
+            <span>Motos vistoriadas, com histórico e manutenção em dia.</span>
           </article>
           <article className="feature-card">
-            <strong>Agente especializado</strong>
-            <span>IA que consulta tratamentos reais antes de responder pacientes.</span>
+            <strong>Consultor com IA</strong>
+            <span>IA que consulta o estoque real antes de indicar a moto ideal.</span>
           </article>
         </div>
       </section>
@@ -213,7 +213,7 @@ export function AuthPage() {
                 ? "Ao criar uma unidade, a conta nasce como administrador."
                 : registerForm.companyMode === "join"
                   ? "Ao entrar em uma unidade existente, a conta nasce como administrador."
-                  : "Clientes visualizam tratamentos de todas as unidades e podem filtrar por unidade."}
+                  : "Clientes visualizam o estoque de todas as unidades e podem filtrar por loja."}
             </div>
 
             {registerForm.companyMode === "create" ? (
@@ -227,7 +227,7 @@ export function AuthPage() {
                       companyName: event.target.value
                     }))
                   }
-                  placeholder="Ex.: Clínica Rigatti"
+                  placeholder="Ex.: Modena SPO — Curitiba"
                   required
                 />
               </label>
@@ -241,7 +241,7 @@ export function AuthPage() {
                   onChange={(event) =>
                     setRegisterForm((current) => ({ ...current, companySlug: event.target.value }))
                   }
-                  placeholder="clinica-rigatti"
+                  placeholder="modena-curitiba"
                   required
                 />
               </label>

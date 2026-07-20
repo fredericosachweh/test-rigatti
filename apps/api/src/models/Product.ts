@@ -28,6 +28,37 @@ const productSchema = new Schema(
       required: true,
       trim: true
     },
+    brand: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    model: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    year: {
+      type: Number,
+      required: true,
+      min: 1950,
+      max: 2100
+    },
+    mileage: {
+      type: Number,
+      required: true,
+      min: 0
+    },
+    engineCc: {
+      type: Number,
+      required: true,
+      min: 0
+    },
+    color: {
+      type: String,
+      required: true,
+      trim: true
+    },
     images: {
       type: [
         {
